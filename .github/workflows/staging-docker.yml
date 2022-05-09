@@ -1,4 +1,4 @@
-name: Staging Dex Backend Pipeline
+name: Staging Dex Backend Pipeline Test
 
 on:
   pull_request:
