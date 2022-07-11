@@ -1,5 +1,5 @@
 import NETWORKS from './networks';
-import { Universal, Node } from '@aeternity/aepp-sdk';
+import { AeSdk, Node } from '@aeternity/aepp-sdk';
 import {
   CallData,
   ContractAddress,
@@ -16,12 +16,11 @@ let client: any = null;
 const getClient = async () => {
   const NETWORK_NAME = nonNullable(process.env.NETWORK_NAME);
   if (!client) {
-    const node = await Node({
-      url: NETWORKS[NETWORK_NAME].nodeUrl,
+    const node = await new Node(NETWORKS[NETWORK_NAME].nodeUrl, {
       ignoreVersion: true,
     });
 
-    client = await Universal({
+    client = new AeSdk({
       nodes: [{ name: NETWORK_NAME, instance: node }],
       compilerUrl: NETWORKS[NETWORK_NAME].compilerUrl,
     });

@@ -43,7 +43,7 @@ const upsertTokenInformation = async (
   try {
     tokenMethods = await ctx.getToken(address);
   } catch (error) {
-    const noContract = `Contract with address ${address} not found on-chain`;
+    const noContract = `v3/contracts/${address} error: Contract not found`;
     if (noContract === error.message) {
       const tokenFromDb = await dal.token.upsertNoContractForToken(address);
       logger.warn(`No contract for Token ${address}`);
