@@ -1,5 +1,14 @@
 # Changelog
 
+### [1.0.2](https://www.github.com/aeternity/dex-backend/compare/v1.0.1...v1.0.2) (2024-02-14)
+
+
+### CI / CD
+
+* add auth for repo checkout stg ([ffe7229](https://www.github.com/aeternity/dex-backend/commit/ffe7229b7080abbd8f33e2afcdbbd633cc1d5d25))
+* change gitops repo for stg ([daff046](https://www.github.com/aeternity/dex-backend/commit/daff0464dfbb734b435368b3fbb8881f0681658c))
+* change token key ([ed0fbc8](https://www.github.com/aeternity/dex-backend/commit/ed0fbc8dbc18cbe0c5087e1231a3dbfb5e8137d0))
+
 ### [1.0.1](https://www.github.com/aeternity/dex-backend/compare/v1.0.0...v1.0.1) (2023-04-26)
 
 
