@@ -1,9 +1,14 @@
 import NETWORKS from './networks';
-import { AeSdk, Node } from '@aeternity/aepp-sdk';
-import { CallData, ContractAddress, WalletAddress, nonNullable } from './utils';
-import * as routerInterface from 'dex-contracts-v2/build/IAedexV2Router.aes.js';
-import * as factoryInterface from 'dex-contracts-v2/build/IAedexV2Factory.aes.js';
-import * as pairInterface from 'dex-contracts-v2/build/IAedexV2Pair.aes';
+import {
+  AeSdk,
+  Node,
+  ContractMethodsBase,
+} from '@aeternity/aepp-sdk';
+import { ContractAddress, nonNullable } from './utils';
+import * as routerInterface from 'dex-contracts-v2/build/AedexV2Router.aci.json';
+import * as factoryInterface from 'dex-contracts-v2/build/AedexV2Factory.aci.json';
+import * as pairInterface from 'dex-contracts-v2/build/AedexV2Pair.aci.json';
+import ContractWithMethods from '@aeternity/aepp-sdk/es/contract/Contract';
 
 let client: AeSdk;
 let node: Node;
@@ -17,39 +22,27 @@ const getClient = async (): Promise<[AeSdk, Node]> => {
 
     client = new AeSdk({
       nodes: [{ name: NETWORK_NAME, instance: node }],
-      compilerUrl: NETWORKS[NETWORK_NAME].compilerUrl,
     });
   }
   return [client, node];
 };
 
 export type RouterMethods = {
-  factory: () => ContractMethodResult<ContractAddress>;
+  factory: () => ContractAddress;
 };
 
 export type FactoryMethods = {
-  allPairs: () => ContractMethodResult<ContractAddress[]>;
+  get_all_pairs: () => ContractAddress[];
 };
 
-export type ContractMethodResult<T> = Promise<{
-  result: {
-    callerId: WalletAddress;
-    callerNonce: number;
-    contractId: ContractAddress;
-    gasPrice: number;
-    gasUsed: number;
-    height: number;
-    log: any[];
-    returnType: 'ok' | 'revert';
-    returnValue: CallData;
-  };
-  decodedResult: T;
-}>;
 export type PairMethods = {
-  token0: () => ContractMethodResult<ContractAddress>;
-  token1: () => ContractMethodResult<ContractAddress>;
-  totalSupply: () => ContractMethodResult<bigint>;
-  reserves: () => ContractMethodResult<{ reserve0: bigint; reserve1: bigint }>;
+  token0: () => ContractAddress;
+  token1: () => ContractAddress;
+  total_supply: () => bigint;
+  get_reserves: () => {
+    reserve0: bigint;
+    reserve1: bigint;
+  };
 };
 
 export type MetaInfo = {
@@ -59,102 +52,87 @@ export type MetaInfo = {
 };
 
 export type Aex9Methods = {
-  metaInfo: () => ContractMethodResult<MetaInfo>;
-};
-
-const wrapRouter = (router: any): RouterMethods => {
-  const methods = router.methods;
-
-  return {
-    factory: methods.factory,
-  };
-};
-const wrapFactory = (factory: any): FactoryMethods => {
-  const methods = factory.methods;
-
-  return {
-    allPairs: methods.get_all_pairs,
-  };
-};
-
-const wrapPair = (pair: any): PairMethods => {
-  const methods = pair.methods;
-
-  return {
-    token0: methods.token0,
-    token1: methods.token1,
-    totalSupply: methods.total_supply,
-    reserves: methods.get_reserves,
-  };
-};
-
-const wrapAex9 = (token: any): Aex9Methods => {
-  const methods = token.methods;
-
-  return {
-    metaInfo: methods.meta_info,
-  };
+  meta_info: () => MetaInfo;
 };
 
 export type Context = {
-  router: RouterMethods;
-  factory: FactoryMethods;
-  getPair: (address: ContractAddress) => Promise<PairMethods>;
-  getToken: (address: ContractAddress) => Promise<Aex9Methods>;
+  router: ContractWithMethods<RouterMethods>;
+  factory: ContractWithMethods<FactoryMethods>;
+  getPair: (
+    address: ContractAddress,
+  ) => Promise<ContractWithMethods<PairMethods>>;
+  getToken: (
+    address: ContractAddress,
+  ) => Promise<ContractWithMethods<Aex9Methods>>;
   node: Node;
 };
 
 const createGetToken =
   (
-    tokens: { [key: string]: Aex9Methods | undefined },
-    getInstance: (source: string, address: string) => Promise<any>,
+    tokens: { [key: string]: ContractWithMethods<Aex9Methods> | undefined },
+    getInstance: Awaited<ReturnType<typeof instanceFactory>>,
   ) =>
-  async (tokenAddress: string): Promise<Aex9Methods> => {
+  async (
+    tokenAddress: ContractAddress,
+  ): Promise<ContractWithMethods<Aex9Methods>> => {
     const cached = tokens[tokenAddress];
     if (cached) {
       return cached;
     }
-    const token = wrapAex9(await getInstance(pairInterface, tokenAddress));
+    const token = await getInstance<Aex9Methods>(pairInterface, tokenAddress);
     tokens[tokenAddress] = token;
     return token;
   };
 
 const createGetPair =
   (
-    pairs: { [key: string]: PairMethods | undefined },
-    getInstance: (source: string, address: string) => any,
+    pairs: { [key: string]: ContractWithMethods<PairMethods> | undefined },
+    getInstance: Awaited<ReturnType<typeof instanceFactory>>,
   ) =>
-  async (pairAddress: string): Promise<PairMethods> => {
+  async (
+    pairAddress: ContractAddress,
+  ): Promise<ContractWithMethods<PairMethods>> => {
     const cached = pairs[pairAddress];
     if (cached) {
       return cached;
     }
-    const pair = wrapPair(await getInstance(pairInterface, pairAddress));
+    const pair = await getInstance<PairMethods>(pairInterface, pairAddress);
     pairs[pairAddress] = pair;
     return pair;
   };
 
-const instanceFactory = async (client: any) => {
-  return (source: string, contractAddress: string): Promise<any> =>
-    client.getContractInstance({ source, contractAddress });
+const instanceFactory = async (client: AeSdk) => {
+  return <T extends ContractMethodsBase>(
+    aci: any,
+    contractAddress: ContractAddress,
+  ) => client.initializeContract<T>({ aci, address: contractAddress });
 };
 
 export const getContext = async (): Promise<Context> => {
+  const routerAddress = process.env.ROUTER_ADDRESS;
+  if (!routerAddress) {
+    throw new Error('Router address is not set');
+  }
   const [client, node] = await getClient();
   const getInstance = await instanceFactory(client);
-  const router = await getInstance(
+  const router = await getInstance<RouterMethods>(
     routerInterface,
-    nonNullable(process.env.ROUTER_ADDRESS),
+    nonNullable<ContractAddress>(routerAddress as ContractAddress),
   );
-  const factory = await getInstance(
+  const factory = await getInstance<FactoryMethods>(
     factoryInterface,
-    nonNullable(process.env.FACTORY_ADDRESS),
+    nonNullable<ContractAddress>(
+      process.env.FACTORY_ADDRESS as ContractAddress,
+    ),
   );
-  const pairs: { [key: string]: PairMethods | undefined } = {};
-  const tokens: { [key: string]: Aex9Methods | undefined } = {};
+  const pairs: { [key: string]: ContractWithMethods<PairMethods> | undefined } =
+    {};
+  const tokens: {
+    [key: string]: ContractWithMethods<Aex9Methods> | undefined;
+  } = {};
   return {
-    router: wrapRouter(router),
-    factory: wrapFactory(factory),
+    router,
+    factory,
     getPair: createGetPair(pairs, getInstance),
     getToken: createGetToken(tokens, getInstance),
     node,
