@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.5.1](https://www.github.com/aeternity/dex-backend/compare/v1.5.0...v1.5.1) (2024-11-08)
+
+
+### CI / CD
+
+* change pr closed triggers ([64303fc](https://www.github.com/aeternity/dex-backend/commit/64303fc676cd33db9e80152c0bbc5824c890c663))
+* update gh actions versions ([442e260](https://www.github.com/aeternity/dex-backend/commit/442e2603c734ce3db5140fb06b5cc09862d55ab9))
+
 ## [1.5.0](https://www.github.com/aeternity/dex-backend/compare/v1.4.0...v1.5.0) (2024-07-29)
 
 
