@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.6.1](https://www.github.com/aeternity/dex-backend/compare/v1.6.0...v1.6.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* build now only includes src ([9266d40](https://www.github.com/aeternity/dex-backend/commit/9266d40e130c7691a81983c8bb85a3e343ab9cb3))
+
 ## [1.6.0](https://www.github.com/aeternity/dex-backend/compare/v1.5.0...v1.6.0) (2024-11-19)
 
 
