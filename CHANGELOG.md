@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.6.2](https://www.github.com/aeternity/dex-backend/compare/v1.6.1...v1.6.2) (2025-02-09)
+
+
+### CI / CD
+
+* fix gh action undeploy step triggers ([01b6c56](https://www.github.com/aeternity/dex-backend/commit/01b6c56a09d1ec59fb2707fe0f5ffec064796d2b))
+* pipeline changes ([b3e4ec8](https://www.github.com/aeternity/dex-backend/commit/b3e4ec8d7100940b263d4a83b04df8793b24ab4d))
+
 ### [1.6.1](https://www.github.com/aeternity/dex-backend/compare/v1.6.0...v1.6.1) (2024-11-19)
 
 
