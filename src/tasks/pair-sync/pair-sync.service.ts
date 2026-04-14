@@ -205,7 +205,7 @@ export class PairSyncService implements OnModuleInit {
     //get the all pairs
     const dbPairs = await this.pairDb.getAllWithCondition(true);
     this.logger.log(`Refreshing pairs liquidity...`);
-    await Promise.all(
+    await Promise.allSettled(
       dbPairs.map((dbPair) => this.refreshPairLiquidity(dbPair)),
     );
     this.logger.log(`Pairs liquidity refresh completed`);
@@ -365,12 +365,24 @@ export class PairSyncService implements OnModuleInit {
 
   private async refreshPairLiquidity(dbPair: Pair, height?: number) {
     const pair = await this.ctx.getPair(dbPair.address as ContractAddress);
-    const { decodedResult: totalSupply } = await pair.total_supply();
-    const {
-      decodedResult: { reserve0, reserve1 },
-      result,
-    } = await pair.get_reserves();
-    const syncHeight = height ?? result?.height;
+    let totalSupply: bigint;
+    let reserve0: bigint;
+    let reserve1: bigint;
+    let resultHeight: number | undefined;
+    try {
+      const supplyResult = await pair.total_supply();
+      totalSupply = supplyResult.decodedResult;
+      const reservesResult = await pair.get_reserves();
+      reserve0 = reservesResult.decodedResult.reserve0;
+      reserve1 = reservesResult.decodedResult.reserve1;
+      resultHeight = reservesResult.result?.height;
+    } catch (error) {
+      this.logger.warn(
+        `Pair [${dbPair.address}] dry-run failed, skipping sync: ${error.message}`,
+      );
+      return;
+    }
+    const syncHeight = height ?? resultHeight;
     if (syncHeight == null) {
       console.error('Could not get height');
       return;
