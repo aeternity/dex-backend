@@ -167,6 +167,11 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
       - name: Staging undeploy
         if: (startsWith(github.head_ref, 'release') != true) && ((github.event_name == 'pull_request') || (github.event_name == 'delete' && steps.extract-pr.outputs.PR_NUMBER != ''))
         uses: aeternity/ae-github-actions/argocd-undeploy@v7.4.0
