@@ -11,7 +11,7 @@ env:
   ENV: "stg"
   APP: "dex-backend-testnet"
 
-concurrency: dex_backend_staging_environment
+concurrency: dex_backend_staging_testnet-${{ github.ref }}
 
 jobs:
   main:
