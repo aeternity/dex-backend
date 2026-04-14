@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.7.0](https://www.github.com/aeternity/dex-backend/compare/v1.6.1...v1.7.0) (2026-04-14)
+
+
+### Features
+
+* change ae price source to superhero api ([1fa6ae2](https://www.github.com/aeternity/dex-backend/commit/1fa6ae244191e609f8b383588f2500e6febb9058))
+
+
+### CI / CD
+
+* fix gh action undeploy step triggers ([01b6c56](https://www.github.com/aeternity/dex-backend/commit/01b6c56a09d1ec59fb2707fe0f5ffec064796d2b))
+* pipeline changes ([b3e4ec8](https://www.github.com/aeternity/dex-backend/commit/b3e4ec8d7100940b263d4a83b04df8793b24ab4d))
+
+
+### Miscellaneous
+
+* **ci:** add fix for yq ([7668563](https://www.github.com/aeternity/dex-backend/commit/7668563153c6dc088598afea86d41ca0eb7f1048))
+* **ci:** concurency ([c364294](https://www.github.com/aeternity/dex-backend/commit/c364294068ccfc80a54dc7aa3c2d6e6eda7b3ca0))
+* **ci:** update actions ([308b327](https://www.github.com/aeternity/dex-backend/commit/308b327093929e4e95f6e40c494e9944704c7e74))
+* gracefully handle errors ([0142ab8](https://www.github.com/aeternity/dex-backend/commit/0142ab896a399f719a35acea8092a3dc7f574f72))
+* update gh actions cache version ([ce6a886](https://www.github.com/aeternity/dex-backend/commit/ce6a88698997ed4e47ea7588a03343eb807b008a))
+* update gh actions events ([680a82d](https://www.github.com/aeternity/dex-backend/commit/680a82df24833f9a6fe673b47f76b72ade43e797))
+* update initial deploy check step ([5f864cb](https://www.github.com/aeternity/dex-backend/commit/5f864cb39e3a0b5abd5a0b8b69554bc78eb8460e))
+
 ### [1.6.1](https://www.github.com/aeternity/dex-backend/compare/v1.6.0...v1.6.1) (2024-11-19)
 
 
