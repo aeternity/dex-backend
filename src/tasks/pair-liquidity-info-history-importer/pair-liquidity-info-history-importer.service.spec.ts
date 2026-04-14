@@ -9,10 +9,10 @@ import { PairLiquidityInfoHistoryImporterService } from '@/tasks/pair-liquidity-
 import resetAllMocks = jest.resetAllMocks;
 import { CacheModule } from '@nestjs/cache-manager';
 
-import { CoinmarketcapClientService } from '@/clients/coinmarketcap-client.service';
+import { SuperheroClientService } from '@/clients/superhero-client.service';
 import { PairLiquidityInfoHistoryErrorDbService } from '@/database/pair-liquidity-info-history-error/pair-liquidity-info-history-error-db.service';
 import {
-  coinmarketcapResponseAeUsdQuoteData,
+  aeUsdPriceMock,
   contractLog1,
   contractLog2,
   contractLog3,
@@ -46,7 +46,7 @@ const mockMdwClient = {
   getSenderAccountForTransaction: jest.fn(),
 };
 
-const mockCoinmarketcapClient = {
+const mockSuperheroClient = {
   getHistoricalPriceDataThrottled: jest.fn(),
 };
 
@@ -71,8 +71,8 @@ describe('PairLiquidityInfoHistoryImporterService', () => {
         { provide: MdwHttpClientService, useValue: mockMdwClient },
         SdkClientService,
         {
-          provide: CoinmarketcapClientService,
-          useValue: mockCoinmarketcapClient,
+          provide: SuperheroClientService,
+          useValue: mockSuperheroClient,
         },
       ],
       imports: [
@@ -107,8 +107,8 @@ describe('PairLiquidityInfoHistoryImporterService', () => {
       mockMdwClient.getSenderAccountForTransaction.mockResolvedValue(
         senderAccount,
       );
-      mockCoinmarketcapClient.getHistoricalPriceDataThrottled.mockResolvedValue(
-        coinmarketcapResponseAeUsdQuoteData,
+      mockSuperheroClient.getHistoricalPriceDataThrottled.mockResolvedValue(
+        aeUsdPriceMock,
       );
       mockPairLiquidityInfoHistoryDb.upsert.mockResolvedValue(null);
       mockMdwClient.getContractLogsUntilCondition.mockResolvedValue([
@@ -201,8 +201,8 @@ describe('PairLiquidityInfoHistoryImporterService', () => {
       mockPairLiquidityInfoHistoryDb.getLastlySyncedLogByPairId.mockResolvedValue(
         {},
       );
-      mockCoinmarketcapClient.getHistoricalPriceDataThrottled.mockResolvedValue(
-        coinmarketcapResponseAeUsdQuoteData,
+      mockSuperheroClient.getHistoricalPriceDataThrottled.mockResolvedValue(
+        aeUsdPriceMock,
       );
       mockPairLiquidityInfoHistoryDb.upsert.mockResolvedValue(null);
       mockMdwClient.getContractLogsUntilCondition.mockResolvedValue([
@@ -311,9 +311,9 @@ describe('PairLiquidityInfoHistoryImporterService', () => {
         .mockResolvedValueOnce({})
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(undefined);
-      mockCoinmarketcapClient.getHistoricalPriceDataThrottled
+      mockSuperheroClient.getHistoricalPriceDataThrottled
         .mockRejectedValueOnce(new Error(errorMessage))
-        .mockResolvedValueOnce(coinmarketcapResponseAeUsdQuoteData);
+        .mockResolvedValueOnce(aeUsdPriceMock);
 
       mockPairLiquidityInfoHistoryDb.upsert.mockResolvedValueOnce(null);
       mockPairLiquidityInfoHistoryErrorDb.upsert.mockResolvedValueOnce(null);

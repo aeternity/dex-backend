@@ -2,11 +2,11 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Test, TestingModule } from '@nestjs/testing';
 import prisma from '@prisma/client';
 
-import { CoinmarketcapClientService } from '@/clients/coinmarketcap-client.service';
 import { HttpService } from '@/clients/http.service';
 import { MdwHttpClientService } from '@/clients/mdw-http-client.service';
 import { MdwWsClientService } from '@/clients/mdw-ws-client.service';
 import { SdkClientService } from '@/clients/sdk-client.service';
+import { SuperheroClientService } from '@/clients/superhero-client.service';
 import { PairDbService } from '@/database/pair/pair-db.service';
 import { PairLiquidityInfoHistoryDbService } from '@/database/pair-liquidity-info-history/pair-liquidity-info-history-db.service';
 import { PairLiquidityInfoHistoryErrorDbService } from '@/database/pair-liquidity-info-history-error/pair-liquidity-info-history-error-db.service';
@@ -37,7 +37,7 @@ describe('PairSyncService', () => {
         TokenDbService,
         PairDbService,
         HttpService,
-        CoinmarketcapClientService,
+        SuperheroClientService,
         MdwHttpClientService,
         MdwWsClientService,
         SdkClientService,
