@@ -327,4 +327,10 @@ export const coinmarketcapResponseAeUsdQuoteData = {
   },
 };
 
+export const aeUsdPriceMock = 0.050559;
+
+export const superheroResponsePriceData: [number, number][] = [
+  [1704203935000, aeUsdPriceMock],
+];
+
 export const senderAccount = 'ak_sender';

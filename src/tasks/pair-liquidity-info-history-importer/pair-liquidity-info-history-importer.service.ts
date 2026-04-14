@@ -2,11 +2,11 @@ import { Cache } from '@nestjs/cache-manager';
 import { Injectable, Logger } from '@nestjs/common';
 import { orderBy } from 'lodash';
 
-import { CoinmarketcapClientService } from '@/clients/coinmarketcap-client.service';
 import { ContractLog } from '@/clients/mdw-http-client.model';
 import { MdwHttpClientService } from '@/clients/mdw-http-client.service';
 import { ContractAddress } from '@/clients/sdk-client.model';
 import { SdkClientService } from '@/clients/sdk-client.service';
+import { SuperheroClientService } from '@/clients/superhero-client.service';
 import { PairDbService, PairWithTokens } from '@/database/pair/pair-db.service';
 import { PairLiquidityInfoHistoryDbService } from '@/database/pair-liquidity-info-history/pair-liquidity-info-history-db.service';
 import { PairLiquidityInfoHistoryErrorDbService } from '@/database/pair-liquidity-info-history-error/pair-liquidity-info-history-error-db.service';
@@ -41,7 +41,7 @@ export class PairLiquidityInfoHistoryImporterService {
     private pairLiquidityInfoHistoryErrorDb: PairLiquidityInfoHistoryErrorDbService,
     private mdwClient: MdwHttpClientService,
     private sdkClient: SdkClientService,
-    private coinmarketcapClient: CoinmarketcapClientService,
+    private superheroClient: SuperheroClientService,
     private cacheManager: Cache,
   ) {}
 
@@ -368,8 +368,6 @@ export class PairLiquidityInfoHistoryImporterService {
   }
 
   private async fetchPrice(microBlockTime: number): Promise<number> {
-    return this.coinmarketcapClient
-      .getHistoricalPriceDataThrottled(microBlockTime)
-      .then((res) => res.data['1700'].quotes[0].quote.USD.price);
+    return this.superheroClient.getHistoricalPriceDataThrottled(microBlockTime);
   }
 }
